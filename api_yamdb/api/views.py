@@ -1,14 +1,24 @@
 # api/views.py
 
+from django.db.models import Avg
+from rest_framework import filters, viewsets, status
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from api.serializers import SignUpSerializer, TokenSerializer
 from users.models import User
+from api.permissions import IsAdminOrReadOnly
+from api.filters import TitleFilter
+from api.mixins import CreateListDestroyViewSet
+from api.serializers import (CategorySerializer, GenreSerializer,
+                             TitleReadSerializer, TitleWriteSerializer,)
+from api.pagination import PageNumberPagination
+from reviews.models import Category, Genre, Title
 
 
 class SignUpSet(CreateAPIView):
@@ -48,42 +58,6 @@ class TokenSet(CreateAPIView):
             {'error': 'Invalid token'},
             status=status.HTTP_400_BAD_REQUEST
         )
-from django.db.models import Avg
-
-from rest_framework import (
-    filters,
-    viewsets,
-)
-
-from rest_framework.permissions import (
-    IsAuthenticatedOrReadOnly,
-)
-
-from django_filters.rest_framework import DjangoFilterBackend
-
-
-from .pagination import PageNumberPagination
-
-from .permissions import (
-    IsAdminOrReadOnly,
-)
-
-from .filters import TitleFilter
-
-from .mixins import CreateListDestroyViewSet
-
-from .serializers import (
-    CategorySerializer,
-    GenreSerializer,
-    TitleReadSerializer,
-    TitleWriteSerializer,
-)
-
-from reviews.models import (
-    Category,
-    Genre,
-    Title,
-)
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
