@@ -15,6 +15,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'django_filters',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -26,8 +27,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'reviews',
     'api',
-    'rest_framework',
-    'django_filters',
 ]
 
 MIDDLEWARE = [

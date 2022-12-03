@@ -9,9 +9,9 @@ class User(AbstractUser):
     USER = 3
 
     ROLE_CHOICES = (
-        (ADMIN, 'Admin'),
-        (MODERATOR, 'Moderator'),
-        (USER, 'User'),
+        (ADMIN, "Admin"),
+        (MODERATOR, "Moderator"),
+        (USER, "User"),
     )
 
     role = models.PositiveSmallIntegerField(
@@ -21,7 +21,7 @@ class User(AbstractUser):
     )
 
     bio = models.TextField(
-        'Биография',
+        "Биография",
         blank=True,
         null=True,
     )
