@@ -1,7 +1,8 @@
 # api/views.py
 
 from django.db.models import Avg
-from rest_framework import filters, viewsets, status
+from rest_framework import filters, viewsets, status, mixins
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
@@ -12,11 +13,24 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from api.serializers import SignUpSerializer, TokenSerializer
 from users.models import User
-from api.permissions import IsAdminOrReadOnly
+from api.permissions import (
+    ReviewAndCommentsPermission,
+    GenreCategoryPermission,
+    TitlePermission,
+    IsAdminOrReadOnly
+)
 from api.filters import TitleFilter
 from api.mixins import CreateListDestroyViewSet
-from api.serializers import (CategorySerializer, GenreSerializer,
-                             TitleReadSerializer, TitleWriteSerializer,)
+from api.serializers import (
+    TitleReadSerializer,
+    TitleWriteSerializer,
+    TitleListSerializer,
+    TitleSerializer,
+    GenreSerializer,
+    CommentSerializer,
+    CategorySerializer,
+    ReviewSerializer
+)
 from api.pagination import PageNumberPagination
 from reviews.models import Category, Genre, Title
 
@@ -95,3 +109,35 @@ class GenreViewSet(CreateListDestroyViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = "slug"
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    """Вьюсет для обзоров"""
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    serializer_class = ReviewSerializer
+    permission_classes = [ReviewAndCommentsPermission, ]
+
+    def perform_create(self, serializer):
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        serializer.save(author=self.request.user, title=title)
+
+    def get_queryset(self):
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        return title.reviews.all()
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """Вьюсет для комментариев"""
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    serializer_class = CommentSerializer
+    permission_classes = [ReviewAndCommentsPermission, ]
+
+    def perform_create(self, serializer):
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        review = title.reviews.get(pk=self.kwargs.get('review_id'))
+        serializer.save(author=self.request.user, review=review)
+
+    def get_queryset(self):
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        review = title.reviews.get(pk=self.kwargs.get('review_id'))
+        return review.comments.all()
