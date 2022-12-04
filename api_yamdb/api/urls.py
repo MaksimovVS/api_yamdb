@@ -11,6 +11,7 @@ from api.views import (
     CategoryViewSet,
     CommentViewSet,
     ReviewViewSet,
+    UsersViewSet,
 )
 
 app_name = "api"
@@ -29,6 +30,7 @@ router_v1.register(
     CommentViewSet,
     basename="comments",
 )
+router_v1.register("users", UsersViewSet, basename="users")
 
 urlpatterns = [
     path("v1/", include(router_v1.urls)),

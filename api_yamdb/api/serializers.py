@@ -32,6 +32,13 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ("username", "confirmation_code")
 
 
+class UsersSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')
+        # read_only_fields = ('role',)
+
 class CategorySerializer(serializers.ModelSerializer):
     title = serializers.StringRelatedField(
         read_only=True,

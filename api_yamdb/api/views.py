@@ -6,12 +6,16 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import CreateAPIView
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, \
+    IsAdminUser
 from users.models import User
-from api.permissions import ReviewAndCommentsPermission, IsAdminOrReadOnly
+from api.permissions import ReviewAndCommentsPermission, IsAdminOrReadOnly, \
+    IsAdminOnly
 from api.filters import TitleFilter
 from api.mixins import CreateListDestroyViewSet
 from api.serializers import (
@@ -23,6 +27,7 @@ from api.serializers import (
     CommentSerializer,
     CategorySerializer,
     ReviewSerializer,
+    UsersSerializer,
 )
 from api.pagination import PageNumberPagination
 from reviews.models import Category, Genre, Title
@@ -31,6 +36,7 @@ from reviews.models import Category, Genre, Title
 class SignUpSet(CreateAPIView):
 
     serializer_class = SignUpSerializer
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -45,26 +51,43 @@ class SignUpSet(CreateAPIView):
             (user.email,),
             fail_silently=False,
         )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TokenSet(CreateAPIView):
+
     serializer_class = TokenSerializer
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-
-        user = User.objects.get(username=data["username"])
+        try:
+            user = User.objects.get(username=data["username"])
+        except User.DoesNotExist:
+            return Response(
+            {"error": "Пользователь не найден"},
+            status=status.HTTP_404_NOT_FOUND
+        )
         token = data["confirmation_code"]
         if default_token_generator.check_token(user, token):
             token = RefreshToken.for_user(user).access_token
-            return Response({"JWT": str(token)}, status=status.HTTP_200_OK)
+            return Response({"token": str(token)}, status=status.HTTP_200_OK)
         return Response(
             {"error": "Invalid token"},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class UsersViewSet(viewsets.ModelViewSet):
+
+    queryset = User.objects.all()
+    serializer_class = UsersSerializer
+    filter_backends = (SearchFilter,)
+    search_fields = ('username',)
+    permission_classes = (IsAdminOnly,)
+    lookup_field = 'username'
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
