@@ -9,3 +9,11 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 class ReviewAndCommentsPermission(permissions.BasePermission):
     pass
+
+
+class GenreCategoryPermission(permissions.BasePermission):
+    pass
+
+
+class TitlePermission(permissions.BasePermission):
+    pass

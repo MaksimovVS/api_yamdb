@@ -12,6 +12,12 @@ class SignUpSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
+    def validate_username(self, username):
+        if len(username) < 4:
+            raise serializers.ValidationError(
+                "Юзернейм должен быть не менее 4 символов.")
+        return username
+
     class Meta:
         model = User
         fields = ("email", "username")
