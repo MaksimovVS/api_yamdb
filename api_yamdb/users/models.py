@@ -4,9 +4,9 @@ from django.db import models
 
 class User(AbstractUser):
 
-    ADMIN = 1
-    MODERATOR = 2
-    USER = 3
+    ADMIN = "admin"
+    MODERATOR = "moderator"
+    USER = "user"
 
     ROLE_CHOICES = (
         (ADMIN, "Admin"),
@@ -14,10 +14,15 @@ class User(AbstractUser):
         (USER, "User"),
     )
 
-    role = models.PositiveSmallIntegerField(
+    email = models.EmailField(
+        max_length=128,
+        unique=True,
+    )
+
+    role = models.CharField(
+        max_length=9,
         choices=ROLE_CHOICES,
-        blank=True,
-        null=True,
+        default=USER
     )
 
     bio = models.TextField(
