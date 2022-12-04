@@ -39,6 +39,14 @@ class UsersSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')
         # read_only_fields = ('role',)
 
+
+class MeSerializer(serializers.ModelSerializer):
+
+     class Meta:
+         model = User
+         fields = ('username', 'email', 'first_name', 'last_name', 'bio',)
+
+
 class CategorySerializer(serializers.ModelSerializer):
     title = serializers.StringRelatedField(
         read_only=True,

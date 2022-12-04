@@ -7,15 +7,17 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
-from rest_framework.generics import CreateAPIView
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.generics import CreateAPIView, UpdateAPIView, \
+    RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, \
-    IsAdminUser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from users.models import User
-from api.permissions import ReviewAndCommentsPermission, IsAdminOrReadOnly, \
+from api.permissions import (
+    ReviewAndCommentsPermission,
+    IsAdminOrReadOnly,
     IsAdminOnly
+)
 from api.filters import TitleFilter
 from api.mixins import CreateListDestroyViewSet
 from api.serializers import (
@@ -27,7 +29,7 @@ from api.serializers import (
     CommentSerializer,
     CategorySerializer,
     ReviewSerializer,
-    UsersSerializer,
+    UsersSerializer, MeSerializer,
 )
 from api.pagination import PageNumberPagination
 from reviews.models import Category, Genre, Title
@@ -88,6 +90,12 @@ class UsersViewSet(viewsets.ModelViewSet):
     search_fields = ('username',)
     permission_classes = (IsAdminOnly,)
     lookup_field = 'username'
+
+
+class MeSet(UpdateAPIView, RetrieveAPIView):
+
+    queryset = User.objects.all()
+    serializer_class = MeSerializer
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
