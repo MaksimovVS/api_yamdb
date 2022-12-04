@@ -6,12 +6,13 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.generics import CreateAPIView, UpdateAPIView, \
-    RetrieveAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import (
+    IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated)
 from users.models import User
 from api.permissions import (
     ReviewAndCommentsPermission,
@@ -29,7 +30,8 @@ from api.serializers import (
     CommentSerializer,
     CategorySerializer,
     ReviewSerializer,
-    UsersSerializer, MeSerializer,
+    UsersSerializer,
+    NotChangeRoleSerializer,
 )
 from api.pagination import PageNumberPagination
 from reviews.models import Category, Genre, Title
@@ -72,8 +74,8 @@ class TokenSet(CreateAPIView):
             {"error": "Пользователь не найден"},
             status=status.HTTP_404_NOT_FOUND
         )
-        token = data["confirmation_code"]
-        if default_token_generator.check_token(user, token):
+        confirmation_code = data["confirmation_code"]
+        if default_token_generator.check_token(user, confirmation_code):
             token = RefreshToken.for_user(user).access_token
             return Response({"token": str(token)}, status=status.HTTP_200_OK)
         return Response(
@@ -91,11 +93,52 @@ class UsersViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOnly,)
     lookup_field = 'username'
 
+    @action(
+        methods=("GET", "PATCH"),
+        detail=False,
+        permission_classes=(IsAuthenticated,)
+    )
+    def me(self, request):
+        serializer = UsersSerializer(request.user)
+        if request.method == "GET":
+            return Response(serializer.data)
+        if request.user.role == "admin":
+            serializer = UsersSerializer(
+                request.user,
+                data=request.data,
+                partial=True
+            )
+        else:
+            serializer = NotChangeRoleSerializer(
+                request.user,
+                data=request.data,
+                partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-class MeSet(UpdateAPIView, RetrieveAPIView):
-
-    queryset = User.objects.all()
-    serializer_class = MeSerializer
+    '''@action(
+        methods=['GET', 'PATCH'],
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+        url_path='me')
+    def get_current_user_info(self, request):
+        serializer = UsersSerializer(request.user)
+        if request.method == 'PATCH':
+            if request.user.is_admin:
+                serializer = UsersSerializer(
+                    request.user,
+                    data=request.data,
+                    partial=True)
+            else:
+                serializer = UsersSerializer(
+                    request.user,
+                    data=request.data,
+                    partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)'''
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
