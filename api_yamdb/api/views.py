@@ -20,7 +20,7 @@ from api.permissions import (
     IsAdminOnly
 )
 from api.filters import TitleFilter
-from api.mixins import CreateListDestroyViewSet
+from api.mixins import CreateReadDestroyViewSet
 from api.serializers import (
     SignUpSerializer,
     TokenSerializer,
@@ -132,7 +132,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
         return TitleReadSerializer
 
 
-class CategoryViewSet(CreateListDestroyViewSet):
+class CategoryViewSet(CreateReadDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = PageNumberPagination
@@ -142,7 +142,7 @@ class CategoryViewSet(CreateListDestroyViewSet):
     lookup_field = "slug"
 
 
-class GenreViewSet(CreateListDestroyViewSet):
+class GenreViewSet(CreateReadDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     pagination_class = PageNumberPagination

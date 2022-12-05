@@ -1,11 +1,17 @@
 from rest_framework import serializers
 
+from rest_framework.exceptions import ValidationError
+
 
 class UserNameNotValidValidator:
-    def __init__(self, username):
-        self.base = username
+    requires_context = True
 
-    def __call__(self, value):
-        if len(self.username) < 4:
-            message = "username должен содержать не мение 4 символов"
-            raise serializers.ValidationError(message)
+    def __call__(self, attrs, serializer):
+        try:
+            username = serializer.initial_data["username"]
+        except Exception:
+            username = None
+
+        if username == "me":
+            message = "Зарезервированное имя."
+            raise ValidationError(message, code="incorrect_username")

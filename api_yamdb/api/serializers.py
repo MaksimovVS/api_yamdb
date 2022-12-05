@@ -13,7 +13,7 @@ class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("email", "username")
-        validators = (UserNameNotValidValidator,)
+        validators = (UserNameNotValidValidator(),)
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -41,23 +41,17 @@ class NotChangeRoleSerializer(UsersSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    title = serializers.StringRelatedField(
-        read_only=True,
-    )
-
     class Meta:
+        fields = ("name", "slug")
         model = Category
-        exclude = ["id"]
+        lookup_field = "slug"
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    title = serializers.StringRelatedField(
-        read_only=True,
-    )
-
     class Meta:
+        fields = ("name", "slug")
         model = Genre
-        exclude = ["id"]
+        lookup_field = "slug"
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
