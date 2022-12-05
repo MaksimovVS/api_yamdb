@@ -17,11 +17,17 @@ class User(AbstractUser):
     )
 
     email = models.EmailField(
+        "email",
         max_length=128,
         unique=True,
     )
 
-    role = models.CharField(max_length=9, choices=ROLE_CHOICES, default=USER)
+    role = models.CharField(
+        "Роль",
+        max_length=9,
+        choices=ROLE_CHOICES,
+        default=USER
+    )
 
     bio = models.TextField(
         "Биография",
@@ -30,6 +36,7 @@ class User(AbstractUser):
     )
 
     confirmation_code = models.CharField(
+        "Проверочный код",
         max_length=25,
         blank=True,
         null=True,

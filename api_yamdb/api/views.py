@@ -151,7 +151,6 @@ class GenreViewSet(CreateReadDestroyViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    """Вьюсет для обзоров"""
 
     http_method_names = ["get", "post", "patch", "delete"]
     serializer_class = ReviewSerializer
@@ -169,7 +168,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    """Вьюсет для комментариев"""
 
     http_method_names = ["get", "post", "patch", "delete"]
     serializer_class = CommentSerializer
