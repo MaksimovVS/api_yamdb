@@ -1,4 +1,4 @@
-from rest_framework import serializers
+# api/validators.py
 
 from rest_framework.exceptions import ValidationError
 
