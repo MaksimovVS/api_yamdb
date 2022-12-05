@@ -1,19 +1,49 @@
 # api/permissions.py
 
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
+
+
+class IsAdminOnly(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return request.user.role == 'admin' or request.user.is_superuser
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_authenticated:
+            return request.user.role == 'admin' or request.user.is_superuser
+        return False
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
-    pass
+
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+        if request.user.is_authenticated:
+            return request.user.role == 'admin' or request.user.is_superuser
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        if request.user.is_authenticated:
+            return request.user.role == 'admin' or request.user.is_superuser
+        return False
 
 
 class ReviewAndCommentsPermission(permissions.BasePermission):
-    pass
 
+    ROLE = ("admin", "moderator")
 
-class GenreCategoryPermission(permissions.BasePermission):
-    pass
+    def has_permission(self, request, view):
+        return request.method in SAFE_METHODS
 
-
-class TitlePermission(permissions.BasePermission):
-    pass
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        if request.user.is_authenticated:
+            return (obj.author == request.user
+                    or request.user.role in self.ROLE)

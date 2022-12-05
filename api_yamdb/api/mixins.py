@@ -5,6 +5,8 @@ from rest_framework.mixins import (
     CreateModelMixin,
     DestroyModelMixin,
     ListModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
 )
 
 
