@@ -10,7 +10,7 @@ from rest_framework.mixins import (
 )
 
 
-class CreateListDestroyViewSet(
+class CreateReadDestroyViewSet(
     ListModelMixin,
     CreateModelMixin,
     DestroyModelMixin,
