@@ -23,12 +23,12 @@ router_v1.register("titles", TitlesViewSet, basename="title")
 router_v1.register("genres", GenreViewSet, basename="genre")
 router_v1.register("categories", CategoryViewSet, basename="category")
 router_v1.register(
-    "titles/(?P<title_id>\\d+)/reviews", ReviewViewSet, basename="reviews"
+    "titles/(?P<title_id>\\d+)/reviews",
+    ReviewViewSet, basename="reviews",
 )
 router_v1.register(
     "titles/(?P<title_id>\\d+)/reviews/(?P<review_id>\\d+)/comments",
-    CommentViewSet,
-    basename="comments",
+    CommentViewSet, basename="comments",
 )
 router_v1.register("users", UsersViewSet, basename="users")
 

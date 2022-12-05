@@ -12,12 +12,14 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import (
-    IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated)
+    AllowAny,
+    IsAuthenticated,
+)
 from users.models import User
 from api.permissions import (
     ReviewAndCommentsPermission,
     IsAdminOrReadOnly,
-    IsAdminOnly
+    IsAdminOnly,
 )
 from api.filters import TitleFilter
 from api.mixins import CreateReadDestroyViewSet
@@ -71,9 +73,9 @@ class TokenSet(CreateAPIView):
             user = User.objects.get(username=data["username"])
         except User.DoesNotExist:
             return Response(
-            {"error": "Пользователь не найден"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+                {"error": "Пользователь не найден"},
+                status=status.HTTP_404_NOT_FOUND
+            )
         confirmation_code = data["confirmation_code"]
         if default_token_generator.check_token(user, confirmation_code):
             token = RefreshToken.for_user(user).access_token
@@ -89,14 +91,13 @@ class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UsersSerializer
     filter_backends = (SearchFilter,)
-    search_fields = ('username',)
+    search_fields = ("username",)
     permission_classes = (IsAdminOnly,)
-    lookup_field = 'username'
+    lookup_field = "username"
 
     @action(
         methods=("GET", "PATCH"),
-        detail=False,
-        permission_classes=(IsAuthenticated,)
+        detail=False, permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
         serializer = UsersSerializer(request.user)
@@ -104,15 +105,12 @@ class UsersViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         if request.user.role == "admin":
             serializer = UsersSerializer(
-                request.user,
-                data=request.data,
-                partial=True
+                request.user, data=request.data, partial=True
             )
         else:
             serializer = NotChangeRoleSerializer(
-                request.user,
-                data=request.data,
-                partial=True)
+                request.user, data=request.data, partial=True
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -2,7 +2,10 @@
 
 import datetime as dt
 from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator
+)
 from users.models import User
 
 
@@ -89,7 +92,7 @@ class Title(models.Model):
 class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        related_name="reviews", verbose_name="Автор"
+        related_name="reviews", verbose_name="Автор",
     )
     text = models.TextField(
         "Текст отзыва",
@@ -132,11 +135,11 @@ class Review(models.Model):
 class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        related_name="comments", verbose_name="Автор"
+        related_name="comments", verbose_name="Автор",
     )
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE,
-        related_name="comments", verbose_name="Отзыв"
+        related_name="comments", verbose_name="Отзыв",
     )
     text = models.TextField(verbose_name="Комментарий")
     pub_date = models.DateTimeField(

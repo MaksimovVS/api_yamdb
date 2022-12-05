@@ -1,15 +1,12 @@
 # api/serializers.py
 
 from rest_framework import serializers
-from rest_framework.generics import get_object_or_404
-
 from api.validators import UserNameNotValidValidator
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 
 class SignUpSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ("email", "username")
@@ -21,23 +18,27 @@ class TokenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("username", "confirmation_code",)
+        fields = (
+            "username",
+            "confirmation_code",
+        )
 
 
 class UsersSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = (
-            'username', 'email', 'first_name', 'last_name', 'bio', 'role')
+            "username", "email", "first_name", "last_name", "bio", "role",
+        )
 
 
 class NotChangeRoleSerializer(UsersSerializer):
     class Meta:
         model = User
         fields = (
-            'username', 'email', 'first_name', 'last_name', 'bio', 'role')
-        read_only_fields = ('role',)
+            "username", "email", "first_name", "last_name", "bio", "role",
+        )
+        read_only_fields = ("role",)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -67,13 +68,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-            "id",
-            "name",
-            "year",
-            "genre",
-            "category",
-            "description",
-            "rating",
+            "id", "name", "year", "genre", "category", "description", "rating",
         )
 
 
@@ -100,7 +95,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     )
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
-        slug_field="username", read_only=True,
+        slug_field="username",
+        read_only=True,
     )
 
     class Meta:
@@ -122,7 +118,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
-        slug_field="username", read_only=True,
+        slug_field="username",
+        read_only=True,
     )
 
     class Meta:

@@ -1,3 +1,5 @@
+# users/models.py
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -19,11 +21,7 @@ class User(AbstractUser):
         unique=True,
     )
 
-    role = models.CharField(
-        max_length=9,
-        choices=ROLE_CHOICES,
-        default=USER
-    )
+    role = models.CharField(max_length=9, choices=ROLE_CHOICES, default=USER)
 
     bio = models.TextField(
         "Биография",
