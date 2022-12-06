@@ -9,12 +9,19 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import CreateAPIView
+from rest_framework.mixins import (
+    ListModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin
+)
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
 )
+
+from api_yamdb.settings import EMAIL
 from users.models import User
 from api.permissions import (
     ReviewAndCommentsPermission,
@@ -22,7 +29,6 @@ from api.permissions import (
     IsAdminOnly,
 )
 from api.filters import TitleFilter
-from api.mixins import CreateReadDestroyViewSet
 from api.serializers import (
     SignUpSerializer,
     TokenSerializer,
@@ -53,7 +59,7 @@ class SignUpSet(CreateAPIView):
             "Регистрация на YaMDb",
             f"Здравствуйте, {user.username}!"
             f"confirmation_code для получения токена:\n{confirmation_code}",
-            "registrate@YaMDb.ru",
+            EMAIL,
             (user.email,),
             fail_silently=False,
         )
@@ -69,13 +75,7 @@ class TokenSet(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        try:
-            user = User.objects.get(username=data["username"])
-        except User.DoesNotExist:
-            return Response(
-                {"error": "Пользователь не найден"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        user = get_object_or_404(User, username=data["username"])
         confirmation_code = data["confirmation_code"]
         if default_token_generator.check_token(user, confirmation_code):
             token = RefreshToken.for_user(user).access_token
@@ -103,7 +103,7 @@ class UsersViewSet(viewsets.ModelViewSet):
         serializer = UsersSerializer(request.user)
         if request.method == "GET":
             return Response(serializer.data)
-        if request.user.role == "admin":
+        if request.user.is_admin:
             serializer = UsersSerializer(
                 request.user, data=request.data, partial=True
             )
@@ -130,7 +130,12 @@ class TitlesViewSet(viewsets.ModelViewSet):
         return TitleReadSerializer
 
 
-class CategoryViewSet(CreateReadDestroyViewSet):
+class CategoryViewSet(
+    ListModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = PageNumberPagination
@@ -140,7 +145,12 @@ class CategoryViewSet(CreateReadDestroyViewSet):
     lookup_field = "slug"
 
 
-class GenreViewSet(CreateReadDestroyViewSet):
+class GenreViewSet(
+    ListModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     pagination_class = PageNumberPagination
