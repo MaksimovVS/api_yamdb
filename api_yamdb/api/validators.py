@@ -1,17 +1,11 @@
 # api/validators.py
 
+from django.utils.deconstruct import deconstructible
 from rest_framework.exceptions import ValidationError
 
 
+@deconstructible
 class UserNameNotValidValidator:
-    requires_context = True
-
-    def __call__(self, attrs, serializer):
-        try:
-            username = serializer.initial_data["username"]
-        except Exception:
-            username = None
-
-        if username == "me":
-            message = "Зарезервированное имя."
-            raise ValidationError(message, code="incorrect_username")
+    def __call__(self, value):
+        if value == "me":
+            raise ValidationError("1111")

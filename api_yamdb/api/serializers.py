@@ -1,7 +1,7 @@
 # api/serializers.py
 
 from rest_framework import serializers
-from api.validators import UserNameNotValidValidator
+
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
@@ -10,7 +10,6 @@ class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("email", "username")
-        validators = (UserNameNotValidValidator(),)
 
 
 class TokenSerializer(serializers.ModelSerializer):

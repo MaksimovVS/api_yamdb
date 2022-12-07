@@ -1,7 +1,10 @@
 # users/models.py
 
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+
+from api.validators import UserNameNotValidValidator
 
 
 class User(AbstractUser):
@@ -16,9 +19,15 @@ class User(AbstractUser):
         (USER, "User"),
     )
 
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        validators=(UnicodeUsernameValidator(), UserNameNotValidValidator())
+    )
+
     email = models.EmailField(
         "email",
-        max_length=128,
+        max_length=254,
         unique=True,
     )
 
@@ -41,3 +50,15 @@ class User(AbstractUser):
         blank=True,
         null=True,
     )
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN or self.is_superuser
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
+
+    @property
+    def is_user(self):
+        return self.role == self.USER
