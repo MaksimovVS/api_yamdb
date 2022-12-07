@@ -24,8 +24,6 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 class ReviewAndCommentsPermission(permissions.BasePermission):
 
-    ROLE = ("admin", "moderator")
-
     def has_permission(self, request, view):
         return request.method in SAFE_METHODS or request.user.is_authenticated
 
