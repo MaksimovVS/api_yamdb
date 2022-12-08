@@ -11,28 +11,32 @@ class UserResource(resources.ModelResource):
     class Meta:
         model = User
         fields = (
-            'username',
-            'email',
-            'role',
-            'bio',
-            'first_name',
-            'last_name',
+            "id",
+            "username",
+            "email",
+            "role",
+            "bio",
+            "first_name",
+            "last_name",
         )
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(ImportExportModelAdmin):
+    resource_classes = (UserResource,)
     list_display = (
-        "pk",
+        "id",
         "username",
+        "first_name",
+        "last_name",
         "email",
+        "bio",
+        "role"
+    )
+    list_editable = (
         "first_name",
         "last_name",
         "bio",
         "role",
-        "is_staff",
-        "is_superuser",
-        "password",
     )
-    search_fields = ("username",)
-    empty_value_display = ("-пусто-",)
+    empty_value_display = "-пусто-"
