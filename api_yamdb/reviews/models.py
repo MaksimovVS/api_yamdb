@@ -156,7 +156,6 @@ class Comment(DatePub):
         verbose_name=" Текст комментария"
     )
 
-
     class Meta:
         ordering = ("-pub_date",)
         verbose_name = "Комментарий к отзыву"
