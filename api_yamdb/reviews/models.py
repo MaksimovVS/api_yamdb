@@ -92,9 +92,9 @@ class Title(models.Model):
 class DatePub(models.Model):
 
     pub_date = models.DateTimeField(
-                auto_now_add=True,
-                db_index=True,
-                verbose_name="Дата добавления"
+        auto_now_add=True,
+        db_index=True,
+        verbose_name="Дата добавления"
     )
 
     class Meta:
@@ -155,7 +155,8 @@ class Comment(DatePub):
     text = models.TextField(
         verbose_name=" Текст комментария"
     )
-    
+
+
     class Meta:
         ordering = ("-pub_date",)
         verbose_name = "Комментарий к отзыву"

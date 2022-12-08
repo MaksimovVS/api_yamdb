@@ -20,19 +20,24 @@ class UserResource(resources.ModelResource):
         )
 
 
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(ImportExportModelAdmin):
+    resource_classes = [UserResource]
     list_display = (
-        "pk",
-        "username",
-        "email",
-        "first_name",
-        "last_name",
-        "bio",
-        "role",
-        "is_staff",
-        "is_superuser",
-        "password",
+        'pk',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'bio',
+        'role'
     )
-    search_fields = ("username",)
-    empty_value_display = ("-пусто-",)
+    list_editable = (
+        'first_name',
+        'last_name',
+        'bio',
+        'role',
+    )
+    empty_value_display = '-пусто-'
+
+
+admin.site.register(User, UserAdmin)
