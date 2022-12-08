@@ -72,6 +72,11 @@ django-import-export
 python manage.py createsuperuser
 python manage.py runserver
 ```
+Войдите в админку используя логин и пароль суперюзера
+```http
+http://127.0.0.1:8000/admin/
+```
+Перейдите в интересующую Вас категорию
 Нажмите на кнопку IMPORT
 Выберете файл и укажите его формат
-Нажмите на кнопку CONFIRM IMPORT/
+Нажмите на кнопку CONFIRM IMPORT.
