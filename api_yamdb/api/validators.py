@@ -8,4 +8,4 @@ from rest_framework.exceptions import ValidationError
 class UserNameNotValidValidator:
     def __call__(self, value):
         if value == "me":
-            raise ValidationError("1111")
+            raise ValidationError("Invalid username")

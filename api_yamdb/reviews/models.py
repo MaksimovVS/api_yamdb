@@ -90,12 +90,13 @@ class Title(models.Model):
 
 
 class DatePub(models.Model):
+
     pub_date = models.DateTimeField(
                 auto_now_add=True,
                 db_index=True,
                 verbose_name="Дата добавления"
-	        )
-    
+    )
+
     class Meta:
         abstract = True
 
@@ -146,6 +147,7 @@ class Comment(DatePub):
         User, on_delete=models.CASCADE,
         related_name="comments", verbose_name="Автор",
     )
+
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE,
         related_name="comments", verbose_name="Отзыв",

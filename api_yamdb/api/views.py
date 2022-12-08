@@ -41,7 +41,6 @@ from api.serializers import (
     UsersSerializer,
     NotChangeRoleSerializer,
 )
-from api.pagination import PageNumberPagination
 from reviews.models import Category, Genre, Title
 
 
@@ -119,7 +118,6 @@ class UsersViewSet(viewsets.ModelViewSet):
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg("reviews__score")).order_by("id")
-    pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
     permission_classes = (IsAdminOrReadOnly,)
@@ -138,7 +136,6 @@ class CategoryViewSet(
 ):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = PageNumberPagination
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
@@ -153,7 +150,6 @@ class GenreViewSet(
 ):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    pagination_class = PageNumberPagination
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)

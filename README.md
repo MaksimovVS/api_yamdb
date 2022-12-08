@@ -57,3 +57,21 @@ python manage.py runserver
 ```http
 http://127.0.0.1:8000/redoc/
 ```
+
+### Технологии
+django 2.2.16
+djangorestframework 3.12.4
+PyJWT 2.1.0
+djangorestframework-simplejwt 5.2.2
+django-filter
+django-import-export
+
+### Как добавить информацию в БД
+Создайте суперюзера и запустите сервер:
+```bash
+python manage.py createsuperuser
+python manage.py runserver
+```
+Нажмите на кнопку IMPORT
+Выберете файл и укажите его формат
+Нажмите на кнопку CONFIRM IMPORT/

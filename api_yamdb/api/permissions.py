@@ -5,6 +5,7 @@ from rest_framework.permissions import SAFE_METHODS
 
 
 class IsAdminOnly(permissions.BasePermission):
+
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_admin
 
@@ -13,6 +14,7 @@ class IsAdminOnly(permissions.BasePermission):
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
+
     def has_permission(self, request, view):
         return (request.method in SAFE_METHODS
                 or request.user.is_authenticated and request.user.is_admin)
