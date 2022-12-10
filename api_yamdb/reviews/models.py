@@ -107,7 +107,7 @@ class AuthorTextDatePub(models.Model):
     text = models.TextField(
         verbose_name="Текст"
     )
-    
+
     class Meta:
         abstract = True
 
@@ -152,7 +152,7 @@ class Comment(AuthorTextDatePub):
         related_name="comments",
         verbose_name="Отзыв"
     )
-        
+
     class Meta:
         ordering = ("-pub_date",)
         verbose_name = "Комментарий к отзыву"
