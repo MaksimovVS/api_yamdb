@@ -5,7 +5,8 @@ from rest_framework.exceptions import ValidationError
 
 
 @deconstructible
-class UserNameNotValidValidator:
-    def __call__(self, value):
-        if value == "me":
+class UsernameValidator:
+
+    def __call__(self, username):
+        if username.lower() == "me":
             raise ValidationError("Invalid username")
