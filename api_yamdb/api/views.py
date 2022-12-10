@@ -47,11 +47,10 @@ from reviews.models import Category, Genre, Title
 
 class SignUpSet(CreateAPIView):
 
-    serializer_class = SignUpSerializer
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        serializer = self.get_serializer(data=request.data)
+        serializer = SignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
             user, _ = User.objects.get_or_create(**serializer.validated_data)
@@ -74,11 +73,10 @@ class SignUpSet(CreateAPIView):
 
 class TokenSet(CreateAPIView):
 
-    serializer_class = TokenSerializer
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        serializer = self.get_serializer(data=request.data)
+        serializer = TokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         user = get_object_or_404(User, username=data["username"])
