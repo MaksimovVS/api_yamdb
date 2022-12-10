@@ -6,6 +6,7 @@ from django.core.validators import (
     MaxValueValidator,
     MinValueValidator
 )
+
 from users.models import User
 
 
@@ -57,7 +58,7 @@ class Title(models.Model):
         validators=[
             MaxValueValidator(
                 dt.datetime.now().year,
-                message=("Год выпуска не может быть позже текущего года"),
+                message="Год выпуска не может быть позже текущего года",
             )
         ],
     )
@@ -102,7 +103,7 @@ class AuthorTextDatePub(models.Model):
         auto_now_add=True,
         db_index=True,
         verbose_name="Дата добавления"
-	)
+    )
     text = models.TextField(
         verbose_name="Текст"
     )
@@ -111,7 +112,7 @@ class AuthorTextDatePub(models.Model):
         abstract = True
 
     def __str__(self):
-        return self.text
+        return f"Автор: {self.author}, Текст: {self.text[:20]}"
 
 
 class Review(AuthorTextDatePub):
@@ -131,8 +132,8 @@ class Review(AuthorTextDatePub):
     )
 
     class Meta:
-        verbose_name = ("Отзыв",)
-        verbose_name_plural = ("Отзывы",)
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
         constraints = [
             models.UniqueConstraint(
                 fields=(
@@ -148,7 +149,8 @@ class Review(AuthorTextDatePub):
 class Comment(AuthorTextDatePub):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE,
-        related_name="comments", verbose_name="Отзыв"
+        related_name="comments",
+        verbose_name="Отзыв"
     )
         
     class Meta:
