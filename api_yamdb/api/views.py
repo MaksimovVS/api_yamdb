@@ -157,8 +157,8 @@ class GenreViewSet(
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-
-    http_method_names = ["get", "post", "patch", "delete"]
+    """Вьюсет для обзоров"""
+    http_method_names = ("get", "post", "patch", "delete")
     serializer_class = ReviewSerializer
     permission_classes = [
         ReviewAndCommentsPermission,
@@ -174,8 +174,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-
-    http_method_names = ["get", "post", "patch", "delete"]
+    """Вьюсет для комментариев"""
+    http_method_names = ("get", "post", "patch", "delete")
     serializer_class = CommentSerializer
     permission_classes = [
         ReviewAndCommentsPermission,

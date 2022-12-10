@@ -92,26 +92,29 @@ class Title(models.Model):
         return self.name
 
 
-class DatePub(models.Model):
-
-    pub_date = models.DateTimeField(
-                auto_now_add=True,
-                db_index=True,
-                verbose_name="Дата добавления"
+class AuthorTextDatePub(models.Model):
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Автор"
     )
-
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+        db_index=True,
+        verbose_name="Дата добавления"
+	)
+    text = models.TextField(
+        verbose_name="Текст"
+    )
+    
     class Meta:
         abstract = True
 
+    def __str__(self):
+        return self.text
 
-class Review(DatePub):
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE,
-        related_name="reviews", verbose_name="Автор",
-    )
-    text = models.TextField(
-        verbose_name="Текст отзыва"
-    )
+
+class Review(AuthorTextDatePub):
     score = models.PositiveIntegerField(
         "Оценка",
         validators=[
@@ -128,8 +131,8 @@ class Review(DatePub):
     )
 
     class Meta:
-        verbose_name = "Отзыв"
-        verbose_name_plural = "Отзывы"
+        verbose_name = ("Отзыв",)
+        verbose_name_plural = ("Отзывы",)
         constraints = [
             models.UniqueConstraint(
                 fields=(
@@ -141,28 +144,14 @@ class Review(DatePub):
         ]
         ordering = ("pub_date",)
 
-    def __str__(self):
-        return self.text
 
-
-class Comment(DatePub):
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE,
-        related_name="comments", verbose_name="Автор",
-    )
-
+class Comment(AuthorTextDatePub):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE,
-        related_name="comments", verbose_name="Отзыв",
+        related_name="comments", verbose_name="Отзыв"
     )
-    text = models.TextField(
-        verbose_name=" Текст комментария"
-    )
-    
+        
     class Meta:
         ordering = ("-pub_date",)
         verbose_name = "Комментарий к отзыву"
         verbose_name_plural = "Комментарии к отзыву"
-
-    def __str__(self):
-        return self.text
