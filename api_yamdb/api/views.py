@@ -1,5 +1,6 @@
 # api/views.py
 
+from django.db.utils import IntegrityError
 from django.db.models import Avg
 from rest_framework import filters, viewsets, status
 from django.shortcuts import get_object_or_404
@@ -52,7 +53,13 @@ class SignUpSet(CreateAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        try:
+            user, _ = User.objects.get_or_create(**serializer.validated_data)
+        except IntegrityError:
+            return Response(
+                {"error": "Invalid request"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         confirmation_code = default_token_generator.make_token(user)
         send_mail(
             "Регистрация на YaMDb",
@@ -158,7 +165,7 @@ class GenreViewSet(
 
 class ReviewViewSet(viewsets.ModelViewSet):
 
-    http_method_names = ["get", "post", "patch", "delete"]
+    http_method_names = ("get", "post", "patch", "delete")
     serializer_class = ReviewSerializer
     permission_classes = [
         ReviewAndCommentsPermission,

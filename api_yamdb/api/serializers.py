@@ -1,19 +1,33 @@
 # api/serializers.py
 
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
+from api.validators import UsernameValidator
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 
-class SignUpSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ("email", "username")
+class SignUpSerializer(serializers.Serializer):
+    username = serializers.CharField(
+        max_length=150,
+        validators=(
+            UsernameValidator(),
+            UnicodeUsernameValidator()
+        )
+    )
+    email = serializers.EmailField(validators=(UnicodeUsernameValidator(),))
 
 
 class TokenSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(required=True)
+    username = serializers.CharField(
+        required=True,
+        validators=(
+            UsernameValidator(),
+            UnicodeUsernameValidator()
+        )
+    )
 
     class Meta:
         model = User
@@ -24,6 +38,21 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class UsersSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        max_length=150,
+        validators=(
+            UsernameValidator(),
+            UnicodeUsernameValidator(),
+            UniqueValidator(queryset=User.objects.all()),
+        )
+    )
+    email = serializers.EmailField(
+        validators=(
+            UnicodeUsernameValidator(),
+            UniqueValidator(queryset=User.objects.all()),
+        )
+    )
+
     class Meta:
         model = User
         fields = (
@@ -32,12 +61,7 @@ class UsersSerializer(serializers.ModelSerializer):
 
 
 class NotChangeRoleSerializer(UsersSerializer):
-    class Meta:
-        model = User
-        fields = (
-            "username", "email", "first_name", "last_name", "bio", "role",
-        )
-        read_only_fields = ("role",)
+    role = serializers.CharField(read_only=True)
 
 
 class CategorySerializer(serializers.ModelSerializer):
